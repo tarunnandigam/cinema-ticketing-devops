@@ -91,6 +91,10 @@ Cancellation updates the existing booking status to `cancelled` without deleting
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) and [RUNBOOK.md](RUNBOOK.md).
 
+## GitHub Actions CI
+
+`.github/workflows/ci.yml` runs on pushes to `main` and pull requests targeting `main`. It checks formatting and syntax, applies migrations to an isolated PostgreSQL 18 CI service, runs the full test suite with PostgreSQL integration tests enabled, and builds a Docker image tagged with the commit SHA. The CI image is not pushed to a registry. The CI database and credentials are temporary test-only values; no repository secrets or local database credentials are used. Seeding is omitted because integration tests create their own database fixtures.
+
 ## Docker Compose
 
 Copy the template to the ignored local environment file:
