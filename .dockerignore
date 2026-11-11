@@ -1,7 +1,17 @@
 node_modules
 npm-debug.log*
 .git
+.github
 .env
 .env.*
 !.env.example
 coverage
+tests
+infrastructure
+nginx
+monitoring
+.vscode
+.idea
+README.md
+ARCHITECTURE.md
+RUNBOOK.md
