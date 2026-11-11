@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import request from "supertest";
-import { app } from "../src/app.js";
+import { createApp } from "../src/app.js";
+
+const app = createApp({
+  database: {
+    query: async () => {
+      throw new Error("database unavailable");
+    },
+  },
+});
 
 let server;
 
@@ -22,12 +30,12 @@ test("GET /health reports process health", async () => {
   assert.deepEqual(response.body, { status: "ok" });
 });
 
-test("GET /ready reports database is not configured", async () => {
+test("GET /ready reports database unavailable", async () => {
   const response = await request(server).get("/ready");
   assert.equal(response.status, 503);
   assert.deepEqual(response.body, {
     status: "not_ready",
-    checks: { database: "not_configured" },
+    checks: { database: "unavailable" },
   });
 });
 

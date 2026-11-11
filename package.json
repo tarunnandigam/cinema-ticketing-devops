@@ -10,7 +10,9 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "test": "node --test",
-    "check": "node --check src/app.js && node --check src/server.js && node --check tests/health.test.js",
+    "check": "node --check src/app.js && node --check src/server.js && node --check src/config/database.js && node --check src/controllers/shows.controller.js && node --check src/controllers/reservations.controller.js && node --check src/controllers/cancellations.controller.js && node --check src/routes/shows.js && node --check src/routes/reservations.js && node --check src/routes/cancellations.js && node --check scripts/migrate.js && node --check scripts/seed.js && node --check tests/health.test.js && node --check tests/database.test.js && node --check tests/shows.test.js && node --check tests/show-seats.test.js && node --check tests/reservations.test.js && node --check tests/reservations.postgres.test.js && node --check tests/cancellations.test.js && node --check tests/cancellations.postgres.test.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
