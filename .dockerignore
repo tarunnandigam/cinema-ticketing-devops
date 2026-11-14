@@ -1,4 +1,10 @@
 node_modules
+frontend/node_modules
+frontend/dist
+frontend/coverage
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
 npm-debug.log*
 .git
 .github

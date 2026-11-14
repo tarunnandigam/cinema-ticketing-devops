@@ -111,7 +111,7 @@ Start the complete stack:
 docker compose up -d --build
 ```
 
-Compose builds `cinema-ticketing-api:local`, waits for PostgreSQL to become healthy, applies tracked migrations, seeds repeatable sample data, and then starts the API. Migration and seed run as one-shot services, not as part of each API restart. The PostgreSQL data is stored in the named `postgres_data` volume.
+Compose builds `cinema-ticketing-api:local` and `cinema-ticketing-frontend:local`, waits for PostgreSQL to become healthy, applies tracked migrations, seeds repeatable sample data, and then starts the API and frontend. Migration and seed run as one-shot services, not as part of each API restart. PostgreSQL data remains in the named `postgres_data` volume. The API and frontend host ports bind to loopback only.
 
 Inspect service status and logs:
 
@@ -120,6 +120,30 @@ docker compose ps
 docker compose logs -f api postgres
 Invoke-WebRequest http://localhost:3000/health
 Invoke-WebRequest http://localhost:3000/ready
+```
+
+### Frontend and local edge proxy
+
+Build the frontend image independently or with the full stack:
+
+```powershell
+docker compose build frontend
+docker compose up -d --build
+```
+
+Open the application at [http://localhost:8080](http://localhost:8080). The `edge` Nginx service is the browser entry point: it sends `/api/` requests to the `api` Compose service and all other requests to the static `frontend` service. The edge preserves the full API request URI and forwards the standard host and proxy headers. React Router routes are handled by the frontend container. The frontend uses the relative API base path `/api/v1`; its static Nginx does not proxy API traffic, and the Vite development proxy is not included in production.
+
+Production continues to use the separately configured host Nginx for `/api/` and `/` routing. The local Compose `edge` service is only for reproducing that same-origin layout during local testing; it does not configure HTTPS or change the host Nginx.
+
+The frontend service waits for the API health check, and the edge waits for both frontend and API health checks. The API remains dependent on the healthy database and successful migration/seed services. Frontend build-time configuration defaults to `/api/v1` and contains no host-specific address. For local Vite development, `API_PROXY_TARGET` can point at a local API; it defaults to `http://127.0.0.1:3000`.
+
+Inspect frontend health and logs with:
+
+```powershell
+docker compose ps edge frontend
+docker compose logs edge frontend
+Invoke-WebRequest http://localhost:8080/healthz
+Invoke-WebRequest http://localhost:8080/api/v1/shows
 ```
 
 Run migrations or seeds manually when needed:
